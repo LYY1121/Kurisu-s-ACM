@@ -1,0 +1,40 @@
+/*
+* this code is made by linzehan
+* Problem: 1032
+* Verdict: Accepted
+* Submission Date: 2018-11-08 20:57:43
+* Time: 0 MS
+* Memory: 2020 KB
+*/
+#include<iostream>
+using namespace std;
+typedef long long ll;
+const int mod=1e9+7;
+ll quick(ll a ,ll b)
+{
+    ll sum=1;
+    a=a%mod;
+    while(b)
+    {
+        if(b&1)
+            sum=(sum*a)%mod;
+        b/=2;
+        a=a*a%mod;
+    }
+    return sum;
+}
+ll inv(ll t, ll p)
+{//求t关于p的逆元，注意:t要小于p，最好传参前先把t%p一下
+    t%=p;
+    return t == 1 ? 1 : (p - p / t) * inv(p % t, p) % p;
+}
+int main()
+{
+    ll n,k;
+    while(cin>>n>>k)
+    {
+        ll temp1=((quick(n,k+1)%mod-n%mod)*inv(n-1,mod))%mod;
+        cout<<temp1<<endl;
+        //cout<<quick(n,k)<<endl;
+    }
+}
