@@ -1,0 +1,153 @@
+//RMQ求LCA
+struct node {
+    int v, w;
+};
+class LCA {
+  private:
+    vector<int>dep, pos, olx, dis;
+    vector<vector<int>>st;
+  public:
+    LCA(vector<vector<node>> &G, int r) {
+        int sz = G.size();
+        pos.resize(sz);
+        dis.resize(sz, 0);
+        dep.resize(sz, 0);
+        function<void(int, int)>dfs = [&](int u, int fa) {
+            pos[u] = olx.size();
+            olx.push_back(u);
+            dep[u] = dep[fa] + 1;
+            for(auto &i : G[u]) {
+                if(i.v != fa) {
+                    dis[i.v] = dis[u] + i.w;
+                    dfs(i.v, u);
+                    olx.push_back(u);
+                }
+            }
+        };
+        dfs(r, r);
+        int n = olx.size(), m = log2(n) + 1;
+        st.resize(n);
+        for(int i = 0; i < n; i++) {
+            st[i].resize(m);
+            st[i][0] = olx[i];
+        }
+        for(int j = 1; j < m; j++) {
+            for(int i = 0; i + (1 << j) <= n; i++) {
+                int x = st[i][j - 1], y = st[i + (1 << (j - 1))][j - 1];
+                st[i][j] = dep[x] < dep[y] ? x : y;
+            }
+        }
+    }
+    int que(int u, int v) {
+        int l = pos[u], r = pos[v];
+        if(l > r) swap(l, r);
+        int k = log2(r - l + 1);
+        int x = st[l][k], y = st[r - (1 << k) + 1][k];
+        return dep[x] < dep[y] ? x : y;
+    }
+    int dist(int u, int v) {
+        int lca = que(u, v);
+        return dis[u] + dis[v] - 2 * dis[lca];
+    }
+};
+
+倍增求LCA
+struct node {
+    int v, w;
+
+};
+class LCA {
+  private:
+    vector<int>dep;
+    vector<vector<int>>anc;
+    vector<int>dis;
+  public:
+    LCA(vector<vector<node>> &G, int r) {
+        int n = G.size(), m = log2(n) + 1;
+        anc.resize(n);
+        for(auto &i : anc) i.resize(m);
+        dep.resize(n);
+        dis.resize(n);
+        function<void(int, int)>dfs = [&](int u, int fa) {
+            anc[u][0] = fa;
+            dep[u] = dep[fa] + 1;
+            for(auto &i : G[u]) {
+                if(i.v != fa) {
+                    dis[i.v] = dis[u] + i.w;
+                    dfs(i.v, u);
+                }
+            }
+        };
+        dfs(r, r);
+        for(int j = 1; j < m; j++) {
+            for(int i = 0; i < n; i++) {
+                anc[i][j] = anc[anc[i][j - 1]][j - 1];
+            }
+        }
+    }
+    int que(int u, int v) {
+        if(dep[u] < dep[v]) swap(u, v);
+        for(int i = log2(dep[u]); i >= 0; i--) {
+            if(dep[u] - (1 << i) >= dep[v]) u = anc[u][i];
+        }
+        if(u == v) return u;
+        for(int i = log2(dep[u]); i >= 0; i--) {
+            if(anc[u][i] != anc[v][i]) {
+                u = anc[u][i];
+                v = anc[v][i];
+            }
+        }
+        return anc[u][0];
+    }
+    int dist(int u, int v) {
+        int lca = que(u, v);
+        return dep[u] + dep[v] - dep[lca] * 2;
+    }
+    int kth_anc(int u, int k) { //u节点在k层的祖先
+        if(dep[u] < k) return -1;
+        int d = dep[u] - k;
+        for(int i = log2(d); i >= 0; i--) {
+            if(d - (1 << i) >= 0) {
+                d -= (1 << i);
+                u = anc[u][i];
+            }
+        }
+        return u;
+    }
+};
+
+
+tarjan求LCA
+struct node {
+    int v, w;
+};
+vector<int> LCA(vector<vector<node>> &G, int r, vector<node> &q) {
+    int n = G.size(), m = q.size();
+    vector<vector<node>>que(n);
+    vector<int>bcj(n), ans(m), dis(n);
+    iota(bcj.begin(), bcj.end(), 0);
+    for(int i = 0; i < m; i++) {
+        que[q[i].v].push_back({q[i].w, i});
+        que[q[i].w].push_back({q[i].v, i});
+    }
+    function<int(int)>gr = [&](int k) {
+        return k == bcj[k] ? k : bcj[k] = gr(bcj[k]);
+    };
+    function<void(int, int)>dfs = [&](int u, int fa) {
+        cout << u << endl;
+        for(auto &i : G[u]) {
+            if(i.v != fa) {
+                dis[i.v] = dis[u] + i.w;
+                dfs(i.v, u);
+                bcj[i.v] = u;
+            }
+        }
+        for(auto &i : que[u]) {
+            if(bcj[i.v] != i.v || i.v == u) {
+                ans[i.w] = gr(i.v);
+            }
+        }
+    };
+    dfs(r, r);
+    return ans;
+}
