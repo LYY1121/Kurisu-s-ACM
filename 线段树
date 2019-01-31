@@ -1,0 +1,84 @@
+struct node {
+	int sum, l, r,maxz;
+}tree[maxn*4];
+
+
+void build(int left, int right, int i)  //建树
+{
+	tree[i].l = left;
+	tree[i].r = right;
+	if (left == right)
+	{
+		cin >> tree[i].maxz;
+		return;
+	}
+	int mid = (left + right) >> 1;
+	build(left, mid, i * 2);
+	build(mid + 1, right, i * 2 + 1);
+	//tree[i].sum = tree[i * 2].sum + tree[i * 2 + 1].sum;
+	tree[i].maxz = max(tree[i * 2].maxz, tree[i * 2 + 1].maxz);
+}
+
+
+void add(int i, int s,int t)//单点更新加减
+{
+	tree[i].sum += s;
+	if (tree[i].l ==t&& tree[i].r==t)
+	{
+		return;
+	}
+	int mid = (tree[i].l + tree[i].r) >> 1;
+	if (t > mid)
+	{
+		add(i*2+1,s,t);
+	}
+	else add(i*2,s,t);
+	
+}
+
+
+int query(int i, int a, int b) // 区间和
+{
+	if (tree[i].l == a && tree[i].r == b)
+	{
+		return tree[i].sum;
+	}
+	int mid = (tree[i].l + tree[i].r) >> 1;
+	if (b <= mid)
+		return query(i * 2, a, b);
+	else if (a > mid)
+		return query(i * 2 + 1, a, b);
+	else return query(i * 2, a, mid) + query(i * 2 + 1, mid + 1, b);
+}
+
+
+
+int query_max(int i, int a, int b)  //区间最大
+{
+	if (tree[i].l == a && tree[i].r == b)
+		return tree[i].maxz;
+	int mid = (tree[i].l + tree[i].r) >> 1;
+	if (b <= mid)
+		return query_max(i * 2, a, b);
+	if (a > mid)
+		return query_max(i * 2 + 1, a, b);
+	return max(query_max(i * 2, a, mid) , query_max(i * 2 + 1, mid + 1, b));
+}
+
+
+
+void update(int i, int a, int b)//单点更新
+{
+	if (tree[i].l ==tree[i].r)
+	{
+		tree[i].maxz = b;
+		return;
+	}
+	int mid = (tree[i].l + tree[i].r) >> 1;
+	if (a <= mid)
+		 update(i * 2, a, b);
+	else if(a>mid)
+		 update(i * 2 + 1, a, b);
+	tree[i].maxz = max(tree[i * 2].maxz, tree[i * 2 + 1].maxz);
+
+}
