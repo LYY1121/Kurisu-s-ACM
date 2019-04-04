@@ -1,0 +1,112 @@
+/*
+  SPOJ GSS1/3
+*/
+#include<bits/stdc++.h>
+typedef long long ll;
+#define  mem(a) memset(a,0,sizeof(a))
+using namespace std;
+typedef long long ll;
+const int maxn=4e5+5;
+
+
+struct node
+{
+    int ls,rs,s,ms;
+}t[maxn];
+int a[maxn/4];
+void pushup(int rt)
+{
+    t[rt].ls=max(t[rt<<1].ls,t[rt<<1].s+t[rt<<1|1].ls);
+    t[rt].rs=max(t[rt<<1|1].rs,t[rt<<1|1].s+t[rt<<1].rs);
+    t[rt].ms=max(t[rt<<1].ms,t[rt<<1|1].ms);
+    t[rt].ms=max(t[rt].ms,t[rt<<1].rs+t[rt<<1|1].ls);
+    t[rt].s=t[rt<<1].s+t[rt<<1|1].s;
+    return ;
+}
+void build(int rt,int l,int r)
+{
+    if(l==r)
+    {
+        t[rt].ls=a[l];
+        t[rt].rs=a[l];
+        t[rt].ms=a[l];
+        t[rt].s =a[l];
+        return ;
+    }
+    int m=(l+r)>>1;
+    build(rt<<1,l,m);
+    build(rt<<1|1,m+1,r);
+    pushup(rt);
+}
+
+
+node query(int rt,int l,int r,int ql,int qr)
+{
+    if(l==ql && r==qr)
+    {
+        return t[rt];
+    }
+    int m=(l+r)>>1;
+    if(m>=qr)return query(rt<<1,l,m,ql,qr);
+    if(m<ql) return query(rt<<1|1,m+1,r,ql,qr);
+    else
+    {
+        node lans=query(rt<<1,l,m,ql,m);
+        node rans=query(rt<<1|1,m+1,r,m+1,qr);
+        node ans;
+        ans.ls=max(lans.ls,lans.s+rans.ls);
+        ans.rs=max(rans.rs,rans.s+lans.rs);
+        ans.ms=max(lans.ms,rans.ms);
+        ans.ms=max(ans.ms,lans.rs+rans.ls);
+        ans.s=lans.s+rans.s;
+        return ans;
+    }
+
+}
+void update(int rt,int l,int r,int pos,int k)
+{
+    if(l==r)
+    {
+        t[rt].ls=k;
+        t[rt].rs=k;
+        t[rt].ms=k;
+        t[rt].s=k;
+        return ;
+    }
+    int m=(l+r)/2;
+    if(pos<=m)
+        update(rt<<1,l,m,pos,k);
+    else update(rt<<1|1,m+1,r,pos,k);
+    pushup(rt);
+}
+
+int main()
+{
+    ios::sync_with_stdio(false);
+    cin.tie(0);
+    cout.tie(0);
+    int n;
+    cin>>n;
+    for(int i=1;i<=n;i++)
+        cin>>a[i];
+    build(1,1,n);
+    int m;
+    cin>>m;
+    while(m--)
+    {
+        int op;
+        cin>>op;
+        if(op==1)
+        {
+        int l,r;
+        cin>>l>>r;
+        node ans=query(1,1,n,l,r);
+        cout<<ans.ms<<endl;
+        }
+        else{
+            int x1,y1;
+            cin>>x1>>y1;
+            update(1,1,n,x1,y1);
+        }
+    }
+}
