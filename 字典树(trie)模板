@@ -1,0 +1,48 @@
+struct node{
+    struct node* nextz[10];
+    int flag;
+    node()
+    {
+        for(int i=0;i<10;i++)
+            nextz[i]=NULL;
+        flag=0;
+    }
+};
+node *trie;
+bool flag;
+void Insert(char *s)
+{
+    node *p=trie;
+    int len=strlen(s);
+    for(int i=0;i<len;i++)
+    {
+        int x=s[i]-'0';
+        if(p->nextz[x]==NULL)
+            p->nextz[x]=new node;
+        p=p->nextz[x];
+        if(p->flag!=0)
+        {
+            flag=false;
+            break;
+        }
+    }
+    p->flag++;
+    for(int i=0;i<10;i++)
+    {
+        if(p->nextz[i]!=NULL)
+        {
+            flag=false;
+            return ;
+        }
+    }
+}
+void Dele(node *T)
+{
+    if (!T) return ;
+    for (int i = 0; i < 10; i++)
+    {
+        if (T->nextz[i])
+            Dele(T->nextz[i]);
+    }
+    free(T);
+}
