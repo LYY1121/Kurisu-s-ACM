@@ -1,5 +1,11 @@
 /*
-  SPOJ GSS1/3
+  SPOJ GSS1/3 
+  n 个数，qq 次操作
+
+ 操作0 x y把A[xx]修改为yy
+
+ 操作1 l r询问区间[l, r]的最大子段和
+
 */
 #include<bits/stdc++.h>
 typedef long long ll;
