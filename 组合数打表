@@ -1,0 +1,15 @@
+//组合数打表模板,适用于N<=3000
+//c[i][j]表示从i个中选j个的选法。
+long long C[N][N];
+
+void get_C(int maxn)
+{
+    C[0][0] = 1;
+    for(int i=1;i<=maxn;i++)
+    {
+        C[i][0] = 1;
+        for(int j=1;j<=i;j++)
+            C[i][j] = C[i-1][j]+C[i-1][j-1];
+        //C[i][j] = (C[i-1][j]+C[i-1][j-1])%MOD;
+    }
+}
