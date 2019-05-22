@@ -1,0 +1,115 @@
+import java.io.*;
+import java.util.*;
+import java.math.*;
+class Main{
+    public static long pow(long a,long b)
+    {
+        long res=1;
+        while(b>0)
+        {
+            if(b%2==1)
+                res=res*a;
+            a=a*a;
+            b/=2;
+        }
+        return res;
+        
+    }
+    public static void main(String[] args)throws IOException {
+        StreamTokenizer in = new StreamTokenizer(new BufferedReader(new InputStreamReader(System.in)));
+        PrintWriter out = new PrintWriter(new OutputStreamWriter(System.out));
+        while(in.nextToken()!=StreamTokenizer.TT_EOF)
+        {
+            long k,m,n,p;
+            k=(long)in.nval;
+            long []array=new long[(int)k];
+            in.nextToken();
+            m=(long)in.nval;
+            in.nextToken();
+            n=(long)in.nval;
+            in.nextToken();
+            p=(long)in.nval;
+            m--;
+            for(int i=0;i<k;i++)
+            {
+                in.nextToken();
+                array[i]=(long)in.nval;
+            }
+            Arrays.sort(array);
+            BigDecimal ans=new BigDecimal("0");
+            long cnt=0;
+            long now=n;
+            long tot=0;
+            long temp=0;
+            long cc=0;
+            for(int i=0;i<k;i++)
+            {
+                if(m==0)
+                    break;
+                temp+=array[(int)i];
+                tot++;
+                if(tot==now)
+                {
+                    now*=n;
+                    long sum=0;
+                    if(n!=1)
+                    sum=(1-pow(n,m))/(1-n);
+                    else sum=m;
+                    //System.out.println(sum+" "+tot+" "+ans);
+                    ans=ans.add(BigDecimal.valueOf(sum).multiply(BigDecimal.valueOf(temp))).remainder(BigDecimal.valueOf(p));
+                    m--;
+                    tot=0;
+                    temp=0;
+                    cnt++;
+                }
+            }
+            System.out.println(ans);
+        }
+    }
+}
+//封装版
+class Scanner {
+    private BufferedReader br;
+    private StringTokenizer st;
+ 
+    Scanner(InputStream in) {
+        br = new BufferedReader(new InputStreamReader(in));
+        st = new StringTokenizer("");
+    }
+ 
+    String nextLine() {
+        try {
+            return br.readLine();
+        } catch (IOException e) {
+            throw new IOError(e);
+        }
+    }
+ 
+    boolean hasNext() {
+        while (!st.hasMoreTokens()) {
+            String s = nextLine();
+            if (s == null) {
+                return false;
+            }
+            st = new StringTokenizer(s);
+        }
+        return true;
+    }
+ 
+    String next() {
+        hasNext();
+        return st.nextToken();
+    }
+ 
+    int nextInt() {
+        return Integer.parseInt(next());
+    }
+ 
+    long nextLong() {
+        return Long.parseLong(next());
+    }
+ 
+    double nextDouble() {
+        return Double.parseDouble(next());
+    }
+}
