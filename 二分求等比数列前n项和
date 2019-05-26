@@ -1,0 +1,36 @@
+#include <bits/stdc++.h>
+#define FAST_IO ios::sync_with_stdio(false);cin.tie(0);cout.tie(0)
+#define IT set<node>::iterator
+#define mem(a) memset(a,0,sizeof(a))
+using namespace std;
+typedef long long LL;
+typedef long long ll;
+
+ll PowMod(ll a,ll n,ll m)
+{
+	if(n==0) return 1;
+	int x = PowMod(a,n/2,m);
+	long long ans = (long long) x*x%m;
+	if(n%2==1) ans=ans*a%m;
+	return ans;
+}
+ll PowSumMod(ll a,ll n,ll m)
+{
+	if(n==1) return a%m;
+	if(n%2==0) return (1+PowMod(a,n/2,m))*PowSumMod(a,n/2,m)%m;
+	else return ((1+PowMod(a,(n-1)/2,m))*PowSumMod(a,(n-1)/2,m)%m + PowMod(a,n,m))%m;
+}
+int main()
+{
+    #ifdef ONLINE_JUDGE
+    FAST_IO;
+    #endif // ONLINE_JUDGE
+    int t;
+    cin>>t;
+    while(t--)
+    {
+        ll n,p,q;
+        cin>>q>>n>>p;
+        cout<<PowSumMod(q,n,p)<<endl;
+    }
+}
