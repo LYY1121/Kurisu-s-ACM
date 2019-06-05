@@ -1,0 +1,48 @@
+#include <bits/stdc++.h>
+#define endl '\n'
+#define FAST_IO ios::sync_with_stdio(false);cin.tie(0);cout.tie(0)
+#define IT set<node>::iterator
+#define mem(a) memset(a,0,sizeof(a))
+using namespace std;
+typedef long long LL;
+typedef long long ll;
+const int maxn=1e7+1;
+int a[maxn];
+char buf[1<<21],*p1=buf,*p2=buf;
+inline int getc(){
+    return p1==p2&&(p2=(p1=buf)+fread(buf,1,1<<21,stdin),p1==p2)?EOF:*p1++;
+}
+inline int redi() {
+    int ret = 0,f = 0;char ch = getc();
+    while (!isdigit (ch)) {
+        if (ch == '-') f = 1;
+        ch = getc();
+    }
+    while (isdigit (ch)) {
+        ret = ret * 10 + ch - 48;
+        ch = getc();
+    }
+    return f?-ret:ret;
+}
+//第k大
+int main(int argc, char const *argv[])
+{
+    //freopen("testdata.in","r",stdin);
+    //freopen("testdata.out","w",stdout);
+    std::ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    int t;
+    t=redi();
+    while(t--)
+    {
+        int n,k;
+        n=redi(),k=redi();
+        for(int i=0;i<n;i++)
+        {
+            a[i]=redi();
+        }
+        nth_element(a,a+n-k,a+n);
+        cout<<a[n-k]<<endl;
+    }
+}
