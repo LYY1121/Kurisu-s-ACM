@@ -138,3 +138,65 @@ int main()
     }
     printf("%lld\n",ans);
 }
+/*初始化优化的二进制矩阵快速幂*/
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+const int mod=998244353;
+const int maxn=1e3+50;
+const int inf=0x3f3f3f3f;
+ll base[70][2][2];
+void init()
+{
+    int i,j,k,u;
+    base[1][0][0]=3;base[1][0][1]=2;base[1][1][0]=1;base[1][1][1]=0;
+    ll tempb[2][2];
+    for(u=2;u<=64;u++)
+    {
+        memset(tempb,0,sizeof(tempb));
+        for(i=0;i<2;i++)
+            for(j=0;j<2;j++)
+                for(k=0;k<2;k++)
+                    tempb[i][j]=(tempb[i][j]+base[u-1][i][k]*base[u-1][k][j]%mod)%mod;
+        for(i=0;i<2;i++)
+            for(j=0;j<2;j++)
+                base[u][i][j]=tempb[i][j]%mod;
+    }
+}
+ll jkpow(ll n)
+{
+    int i,j,k,t,u=1;
+    ll ans[2]={1,0};
+    ll tempa[2],tempb[2][2];
+    while(n)
+    {
+        if(n&1)
+        {
+            memset(tempa,0,sizeof(tempa));
+            for(i=0;i<2;i++)
+                for(j=0;j<2;j++)
+                    tempa[i]=(tempa[i]+base[u][i][j]*ans[j]%mod)%mod;
+            for(i=0;i<2;i++)ans[i]=tempa[i]%mod;
+        }
+        memset(tempb,0,sizeof(tempb));
+        u++;
+        n>>=1;
+    }
+    return ans[0]%mod;
+}
+int main()
+{
+    init();
+    ll q,n,a,ans=-1;
+    scanf("%lld%lld",&q,&n);
+    if(q>100000)q=100000;
+    for(int i=1;i<=q;i++)
+    {
+        if(n-1)a=jkpow(n-1);else a=0;
+        n^=(a*a);
+        if(ans==-1)ans=a;
+        else ans^=a;
+        if(!a)break;
+    }
+    printf("%lld\n",ans);
+}
