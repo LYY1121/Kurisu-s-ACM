@@ -1,0 +1,140 @@
+/*
+k进制快速幂
+对同一个基数来说 大数幂可以加快
+对不同基数 或者是 正常幂 很鸡肋 甚至有毒 
+
+*/
+#include<bits/stdc++.h> 
+using namespace std;
+typedef long long ll;
+const int mod=998244353;
+const int maxn=1e2+50;
+const int inf=0x3f3f3f3f;
+ll kpow(ll a,ll b)
+{
+    ll ans=1;
+    while(b)
+    {
+        if(b&1)ans=ans*a%mod;
+        a=a*a%mod;
+        b>>=1;
+    }
+    return ans;
+}
+ll base[6][65540];
+//base[i][1]是基数a的i+1次方 
+//base[i][j]是base[i][1]的j倍。 
+void init(ll a,ll k)
+{
+    base[0][1]=a%mod;
+    int up=3;//up 根据最大数(龙龙)开k次方根的大小来估算 
+    for(int i=1;i<=up;i++)base[i][0]=1;
+    for(int i=0;i<=up;i++)
+    {
+        if(i)base[i][1]=base[i-1][k];
+        for(int j=2;j<=k;j++)
+        {
+            base[i][j]=base[i][j-1]*base[i][1]%mod;
+        }
+    }
+}
+ll K65536_pow(ll a,ll b)
+{
+    int k=65536;
+    init(a,k);
+    ll ans=1,i=0;
+    while(b)
+    {
+        ans=ans*base[i++][b%k]%mod;
+        b/=k;
+    }
+    return ans;
+}
+ 
+int main()
+{
+    ll T;
+    scanf("%d",&T);
+    while(T--)
+    {
+        ll a,b;
+        cin>>a>>b;
+        cout<<kpow(a,b)<<" "<<K65536_pow(a,b)<<endl;
+    }
+}
+
+
+/*k进制矩阵快速幂*/
+#include<bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+const int mod=998244353;
+const int maxn=1e3+50;
+const int inf=0x3f3f3f3f;
+//65535 
+ll base[5][65540][2][2];
+void init()
+{
+    int i,j,k,u,t;
+    base[0][1][0][0]=3;base[0][1][0][1]=2;
+    base[0][1][1][0]=1;base[0][1][1][1]=0;
+    ll tempb[5][2][2];
+    for(t=0;t<=3;t++)
+    {
+        if(t)
+        {
+            for(i=0;i<2;i++)
+                for(j=0;j<2;j++)
+                    base[t][1][i][j]=base[t-1][65536][i][j];
+        }
+        for(u=2;u<=65536;u++)
+        {
+            memset(tempb,0,sizeof(tempb));
+            for(i=0;i<2;i++)
+                for(j=0;j<2;j++)
+                    for(k=0;k<2;k++)
+                            tempb[t][i][j]=(tempb[t][i][j]+base[t][1][i][k]*base[t][u-1][k][j]%mod)%mod;
+            for(i=0;i<2;i++)
+                for(j=0;j<2;j++)
+                    base[t][u][i][j]=tempb[t][i][j]%mod;
+        }
+    }
+    
+}
+ll jkpow(ll n)
+{
+    int i,j,k,t,u=0,re;
+    ll ans[2]={1,0};
+    ll tempa[2];
+    ll tbase[2][2];
+    while(n)
+    {
+        re=n%65536;
+        if(re)
+        {
+            memset(tempa,0,sizeof(tempa));
+            for(i=0;i<2;i++)
+                for(j=0;j<2;j++)
+                    tempa[i]=(tempa[i]+base[u][re][i][j]*ans[j]%mod)%mod;
+            for(i=0;i<2;i++)ans[i]=tempa[i]%mod;
+        }
+        u++;
+        n/=65536;
+    }
+    return ans[0]%mod;
+}
+int main()
+{
+    init();
+    ll q,n,a,ans=-1;
+    scanf("%lld%lld",&q,&n);
+    for(int i=1;i<=q;i++)
+    {
+        if(n-1)a=jkpow(n-1);else a=0;
+        n^=(a*a);
+        if(ans==-1)ans=a;
+        else ans^=a;
+        if(!a)break;
+    }
+    printf("%lld\n",ans);
+}
