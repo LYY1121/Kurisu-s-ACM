@@ -50,3 +50,50 @@ int main()
 
     return 0;
 }
+/*O(1)快速乘*/
+long long ksc(long long a, long long b) {
+	return (a * b - (long long)((long double)a / mod * b) * mod + mod) % mod;
+}
+ 
+long long ksm(long long a, long long b) {
+	long long ans = 1;
+	while (b) {
+		if (b & 1)
+			ans = ksc(ans, a);
+		a = ksc(a, a), b >>= 1;
+	}
+	return ans;
+}
+
+/*十进制快速幂*/
+inline long long mul(long long a, long long b, long long mod) {
+	return (a * b - (long long)((long double)a / mod * b) * mod + mod) % mod;
+}
+ 
+inline long long mod_pow(long long a, long long b, long long mod) {
+	if (b == 0) return 1;
+	for (; ~b & 1; a = mul(a, a, mod), b >>= 1);
+		/*一个对二进制快速幂的小优化，去除后导零*/
+	long long ret = a;
+	for (b >>= 1; b; b >>= 1)
+		a = mul(a, a, mod), (b & 1) ? ret = mul(ret, a, mod) : 0;
+	return ret;
+}
+ 
+inline long long mod_pow_solve(long long a, char *b, long long mod) {
+	long long ret = 1;
+	int len = strlen(b);
+	for (int i = len - 1; i >= 0; --i)
+	/*核心思想，每一次直接找当前的位置的pow乘上去，
+	每一次将a ^ (10 ^ n - 1) 变成 a ^ (10 ^ n)*/ 
+		ret = mul(ret, mod_pow(a, b[i] ^ '0', mod), mod), a = mod_pow(a, 10, mod);
+	return ret;
+}
+ 
+int main() {
+	std::ios::sync_with_stdio(false);
+	std::cin.tie(NULL), std::cout.tie(NULL);
+	std::cin >> a >> b;
+	std::cout << mod_pow_solve(a, b, mod);
+	return 0;
+}
