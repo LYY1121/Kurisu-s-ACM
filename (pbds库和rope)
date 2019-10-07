@@ -1,0 +1,24 @@
+//rope其主要是结合了链表和数组各自的优点，链表中的节点指向每个数据块，即数组，并且记录数据的个数，然后分块查找和插入。
+//在g++头文件中，< ext / rope >中有成型的块状链表，在using namespace__gnu_cxx;空间中，其操作十分方便。
+
+基本操作： 
+rope test;
+
+test.push_back(x);//在末尾添加x
+
+test.insert(pos,x);//在pos插入x　　
+
+test.erase(pos,x);//从pos开始删除x个
+
+test.copy(pos,len,x);//从pos开始到pos+len为止用x代替
+
+test.replace(pos,x);//从pos开始换成x
+
+test.substr(pos,x);//提取pos开始x个
+
+test.at(x)/[x];//访问第x个元素
+
+其算法复杂度n*(n^0.5)
+
+
+pbds:https://www.luogu.org/blog/Chanis/gnu-pbds
