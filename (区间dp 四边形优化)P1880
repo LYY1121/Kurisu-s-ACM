@@ -1,0 +1,71 @@
+//四边形不等式：如果对于i≤i'< j≤j'，有w(i,j)+w(i',j')≤w(i',j)+w(i,j')，我们称函数w满足四边形不等式。
+//区间包含的单调性：如果对于i≤i'< j≤j'，有w(i',j)≤w(i,j')，那么说明w具有区间包含的单调性。
+//定理一：如果上述的w函数同时满足区间包含单调性和四边形不等式性质，那么函数m也满足四边形不等式性质。
+//定理二：假如m(i,j)满足四边形不等式，那么s(i,j)单调，即s(i,j)≤s(i,j+1)≤s(i+1,j+1)。
+#include<bits/stdc++.h>
+#define endl '\n'
+#define mem(a) memset(a,0,sizeof(a))
+#define Kurisu 1
+#define debug cout<<1<<endl;
+typedef long long ll;
+using namespace std;
+const int N=200010;
+const int mod=1e9+7;
+const int inf=0x3f3f3f3f;
+int a[205];
+int dp[205][205];
+int dp2[205][205];
+int s[205][205];
+int sum[205];
+int main(){
+    ios::sync_with_stdio(false),cin.tie(0),cout.tie(0);
+    //freopen("in.txt","r",stdin);
+    int n;
+    cin>>n;
+    for(int i=1;i<=n;i++){
+        cin>>a[i];
+        a[i+n]=a[i];
+    }
+    //memset(dp2,inf,sizeof(dp2));
+    for(int i=1;i<=2*n;i++){
+        sum[i]=sum[i-1]+a[i];
+        s[i][i]=i;
+    }
+    /*
+    O(n^3）
+    for(int len=1;len<n;len++){
+        for(int i=1,j=i+len;(i<(2*n))&&(j<(2*n));i++,j=i+len){
+            dp2[i][j]=inf;
+            for(int k=i;k<j;k++){
+                dp[i][j]=max(dp[i][j],dp[i][k]+dp[k+1][j]+sum[j]-sum[i-1]);
+                dp2[i][j]=min(dp2[i][j],dp2[i][k]+dp2[k+1][j]+sum[j]-sum[i-1]);
+            }
+        }
+    }
+    */
+    /* O（n^2)
+    for(int i=2*n-1;i>0;--i){
+        for(int j=i+1;j<=(2*n);j++){
+            int jc=0,tmp=inf;
+            dp[i][j]=max(dp[i][j-1],dp[i+1][j])+sum[j]-sum[i-1];
+            for(int k=s[i][j-1];k<=s[i+1][j];k++){
+                int tt=dp2[i][k]+dp2[k+1][j]+(sum[j]-sum[i-1]);
+                if(tt<tmp){
+                    tmp=tt,jc=k;
+                }
+            }
+            s[i][j]=jc;
+            dp2[i][j]=tmp;
+        }
+    }
+    */
+    int maxz=0;
+    int minz=inf;
+    for(int i=1;i<=n;i++){
+        maxz=max(maxz,dp[i][i+n-1]);
+        minz=min(minz,dp2[i][i+n-1]);
+    }
+    cout<<minz<<endl;
+    cout<<maxz<<endl;
+
+}
