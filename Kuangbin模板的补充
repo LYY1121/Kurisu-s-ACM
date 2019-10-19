@@ -1,1 +1,36 @@
+0.618 法（黄金分割法）给出一个N次函数，保证在范围[l,r]内存在一点x，使得[l,x]上单调增，[x,r]上单调减。试求出x的值。
+const double gold=(sqrt(5)-1)/2;
+int n;
+double l,r;
+double a[N],fl,fr;
+bool getr=true,getl=true;
+double f(double x){//计算线性方程f(x)
+    double ans=0,k=1;
+    for(int i=n;i>=0;i--){
+        ans+=k*a[i];
+        k*=x;
+    }
+    return ans;
+}
+int main() {
+	ios::sync_with_stdio(false),cin.tie(0),cout.tie(0);
+    cin>>n>>l>>r;
+    for(int i=0;i<=n;i++)cin>>a[i];
+    while(r-l>1e-8){
+        double midr=(r-l)*gold+l;
+        double midl=(r-l)*(1-gold)+l;
+        if(getl)fl=f(midl);
+        if(getr)fr=f(midr);
+        if(fl>fr){
+            r=midr,fr=fl,getl=true,getr=false;
+            continue;
+        }
+        if(fl<fr){
+            l=midl,fl=fr,getl=false,getr=true;
+            continue;
+        }
+        if(fl==fr)r=midr,l=midl,getl=true,getr=true;
+    }
+    cout<<fixed<<setprecision(5)<<r<<endl;
+}
 
